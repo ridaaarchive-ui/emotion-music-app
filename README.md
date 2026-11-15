@@ -1,4 +1,5 @@
 # Emotion-Based Music Recommendation System
+[![Open in GitHub Codespaces](https://github.com)](https://codespaces.new)
 
 **Built by Ridaa**
 
