@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion-Based Music Recommender</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 { color: #1DB954; margin-bottom: 5px; }
+        p.subtitle { color: #b3b3b3; margin-bottom: 25px; }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .card {
+            background: #181818;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            flex: 1;
+            min-width: 340px;
+        }
+        img#video-feed {
+            width: 100%;
+            max-width: 480px;
+            border-radius: 10px;
+            border: 2px solid #1DB954;
+        }
+        .emotion-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            background: #1DB954;
+            color: #000;
+            border-radius: 25px;
+            text-transform: uppercase;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #282828;
+            color: #fff;
+            border: 1px solid #1DB954;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        button:hover { background: #1DB954; color: #000; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            text-align: left;
+        }
+        th, td { padding: 12px; border-bottom: 1px solid #282828; }
+        th { color: #1DB954; }
+        tr:hover { background: #222222; }
+    </style>
+</head>
+<body>
+    <h1>Emotion-Based Music Recommendation</h1>
+    <p class="subtitle">Real-time facial expression detection powered by CNN & OpenCV</p>
+
+    <div class="container">
+        <div class="card">
+            <h2>Live Camera Feed</h2>
+            <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Webcam Feed">
+            <br>
+            <div class="emotion-badge" id="emotion-text">Detecting...</div>
+            <br>
+            <button onclick="fetchRecommendations()">Refresh Playlist for Current Mood</button>
+        </div>
+
+        <div class="card">
+            <h2>Recommended Songs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Song Name</th>
+                        <th>Artist</th>
+                        <th>Album</th>
+                    </tr>
+                </thead>
+                <tbody id="song-table">
+                    <tr><td colspan="3">Look at the camera to load songs...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function fetchRecommendations() {
+            fetch('/get_songs')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('emotion-text').innerText = "Mood: " + data.emotion;
+                    const tbody = document.getElementById('song-table');
+                    tbody.innerHTML = '';
+                    data.songs.forEach(song => {
+                        const row = `<tr>
+                            <td>${song.name}</td>
+                            <td>${song.artist}</td>
+                            <td>${song.album}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+        setInterval(fetchRecommendations, 4000);
+    </script>
+    <footer style="margin-top: 40px; padding: 15px; color: #b3b3b3; font-size: 0.95rem; border-top: 1px solid #282828;">
+        Built by <strong style="color: #1DB954;">Ridaa</strong> | Emotion-Based Music Recommendation System
+    </footer>
+</body>
+</html>
